@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hydosky.hydoskycdata.mapper.CargoBreakdownOrderStatsMapper">
+    <resultMap id="BaseResultMap" type="com.hydosky.hydoskycdata.entity.CargoBreakdownOrderStats">
+        <!--@mbg.generated-->
+        <!--@Table t_cargo_breakdown_order_stats-->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="latest_update_time" jdbcType="TIMESTAMP" property="latestUpdateTime"/>
+        <result column="one_level_cargo_breakdown" jdbcType="INTEGER" property="oneLevelCargoBreakdown"/>
+        <result column="two_level_cargo_breakdown" jdbcType="INTEGER" property="twoLevelCargoBreakdown"/>
+        <result column="cargo_count" jdbcType="BIGINT" property="cargoCount"/>
+        <result column="freight_count" jdbcType="BIGINT" property="freightCount"/>
+        <result column="order_count" jdbcType="BIGINT" property="orderCount"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, create_time, latest_update_time, one_level_cargo_breakdown, two_level_cargo_breakdown,
+        cargo_count, freight_count, order_count
+    </sql>
+
+    <update id="addNumber">
+        update t_cargo_breakdown_order_stats
+        set cargo_count = cargo_count + #{cargoNumber}
+        ,freight_count = freight_count + #{freightNumber}
+        ,order_count = order_count + #{orderNumber}
+        where two_level_cargo_breakdown = #{twoLevelCargoBreakdown}
+    </update>
+
+    <insert id="initData">
+        insert into t_cargo_breakdown_order_stats (one_level_cargo_breakdown,two_level_cargo_breakdown,cargo_count,freight_count,order_count)
+         value (#{oneLevelCargoBreakdown},#{twoLevelCargoBreakdown},0,0,0)
+    </insert>
+
+    <select id="oneLevelCargoBreakdownStatsBar" resultType="java.util.HashMap">
+        select
+            cb.cargo_breakdown_name x,
+            sum(freight_count) y
+        from
+            t_cargo_breakdown cb
+        LEFT JOIN t_cargo_breakdown_order_stats cbos on cb.id = cbos.one_level_cargo_breakdown
+        where
+            cb.`level` = 1
+        GROUP BY cb.id
+        ORDER BY  y desc
+    </select>
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hydosky.hydoskycdata.mapper.ShoppingMallMapper">
+    <resultMap id="BaseResultMap" type="com.hydosky.hydoskycdata.entity.ShoppingMall">
+        <!--@mbg.generated-->
+        <!--@Table t_shopping_mall-->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="latest_update_time" jdbcType="TIMESTAMP" property="latestUpdateTime"/>
+        <result column="shopping_mall_name" jdbcType="VARCHAR" property="shoppingMallName"/>
+        <result column="province_name" jdbcType="VARCHAR" property="provinceName"/>
+        <result column="city_name" jdbcType="VARCHAR" property="cityName"/>
+        <result column="longitude" jdbcType="DOUBLE" property="longitude"/>
+        <result column="latitude" jdbcType="DOUBLE" property="latitude"/>
+        <result column="parameter" jdbcType="INTEGER" property="parameter"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, create_time, latest_update_time, shopping_mall_name, province_name, city_name,
+        longitude, latitude, `parameter`
+    </sql>
+
+    <select id="todayRealTimeHot" resultType="java.util.HashMap">
+    SELECT
+        sm.city_name `name`,
+        sm.longitude `lng`,
+        sm.latitude `lat`,
+        count( oi.id ) `value`,
+        '1' type
+    FROM
+        t_shopping_mall sm
+        LEFT JOIN t_order_info oi ON sm.id = oi.shopping_mall_id
+    WHERE DATE_FORMAT( oi.create_time, '%Y-%m-%d' ) = DATE_FORMAT( now(), '%Y-%m-%d' )
+    GROUP BY	sm.id
+  </select>
+</mapper>

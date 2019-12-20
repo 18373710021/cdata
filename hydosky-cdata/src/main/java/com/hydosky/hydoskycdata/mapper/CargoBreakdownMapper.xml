@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hydosky.hydoskycdata.mapper.CargoBreakdownMapper">
+    <resultMap id="BaseResultMap" type="com.hydosky.hydoskycdata.entity.CargoBreakdown">
+        <!--@mbg.generated-->
+        <!--@Table t_cargo_breakdown-->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="latest_update_time" jdbcType="TIMESTAMP" property="latestUpdateTime"/>
+        <result column="cargo_breakdown_name" jdbcType="VARCHAR" property="cargoBreakdownName"/>
+        <result column="level" jdbcType="INTEGER" property="level"/>
+        <result column="parent_cargo_breakdown_id" jdbcType="INTEGER" property="parentCargoBreakdownId"/>
+        <result column="min_price" jdbcType="INTEGER" property="minPrice"/>
+        <result column="max_price" jdbcType="INTEGER" property="maxPrice"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, create_time, latest_update_time, cargo_breakdown_name, `level`, parent_cargo_breakdown_id,
+        min_price, max_price
+    </sql>
+
+    <select id="todayRealTimeHot" resultType="java.util.HashMap">
+    SELECT
+        cb.cargo_breakdown_name content,
+        sum( cargo_number ) `value`
+    FROM
+        t_cargo_breakdown cb
+        LEFT JOIN t_order_info oi ON cb.id = oi.two_level_cargo_breakdown
+    WHERE
+        cb.`level` = 2
+        AND DATE_FORMAT( oi.create_time, '%Y-%m-%d' ) = DATE_FORMAT( now(), '%Y-%m-%d' )
+    GROUP BY cb.id
+    ORDER BY `value` DESC
+    LIMIT #{top}
+  </select>
+</mapper>

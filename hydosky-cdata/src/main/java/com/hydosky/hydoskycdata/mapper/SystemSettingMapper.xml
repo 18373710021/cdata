@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hydosky.hydoskycdata.mapper.SystemSettingMapper">
+    <resultMap id="BaseResultMap" type="com.hydosky.hydoskycdata.entity.SystemSetting">
+        <!--@mbg.generated-->
+        <!--@Table t_system_setting-->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="latest_update_time" jdbcType="TIMESTAMP" property="latestUpdateTime"/>
+        <result column="business_hours" jdbcType="TIME" property="businessHours"/>
+        <result column="closing_time" jdbcType="TIME" property="closingTime"/>
+        <result column="min_order_num" jdbcType="BIGINT" property="minOrderNum"/>
+        <result column="max_order_num" jdbcType="BIGINT" property="maxOrderNum"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id,create_time,latest_update_time,business_hours,closing_time,min_order_num,max_order_num,control_number,
+        control_base,generate_order_num,generate_cargo_num,interval_time
+    </sql>
+
+    <select id="getSystemSetting" resultType="com.hydosky.hydoskycdata.entity.SystemSetting">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_system_setting ORDER BY latest_update_time DESC
+        limit 1
+    </select>
+    <update id="updatebusinessHours">
+        UPDATE t_system_setting SET
+        business_hours=#{businessHours},
+        closing_time=#{closingTime}
+         WHERE id=#{id}
+    </update>
+</mapper>

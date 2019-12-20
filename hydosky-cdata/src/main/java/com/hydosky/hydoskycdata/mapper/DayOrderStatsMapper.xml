@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hydosky.hydoskycdata.mapper.DayOrderStatsMapper">
+    <resultMap id="BaseResultMap" type="com.hydosky.hydoskycdata.entity.DayOrderStats">
+        <!--@mbg.generated-->
+        <!--@Table t_day_order_stats-->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="latest_update_time" jdbcType="TIMESTAMP" property="latestUpdateTime"/>
+        <result column="date" jdbcType="DATE" property="date"/>
+        <result column="cargo_count" jdbcType="BIGINT" property="cargoCount"/>
+        <result column="freight_count" jdbcType="BIGINT" property="freightCount"/>
+        <result column="order_count" jdbcType="BIGINT" property="orderCount"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, create_time, latest_update_time, `date`, cargo_count, freight_count, order_count
+    </sql>
+
+    <select id="selectByDate" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_day_order_stats where `date` = #{date}
+    </select>
+    <insert id="insert">
+        insert into t_day_order_stats (`date`, cargo_count, freight_count, order_count) value (#{date},#{cargoNumber},#{freightNumber},#{orderNumber})
+    </insert>
+    <select id="allOrderStats" resultType="java.util.HashMap">
+        select
+            sum( cargo_count ) cargo_total,
+            sum( freight_count ) freight_total,
+            sum( order_count ) order_totoal
+        from
+            t_day_order_stats
+    </select>
+    <select id="timeSlotFreight" resultType="java.util.HashMap">
+        select
+        DATE( `date` ) date,
+        freight_count
+        from
+        t_day_order_stats
+        where
+        DATE( `date` ) &gt;= #{startDate}
+        and DATE( `date` ) &lt; #{endDate}
+    </select>
+
+    <select id="selectDateByDateScope" resultType="java.lang.String">
+        select
+          DATE( `date` )
+        from
+            t_day_order_stats
+        where
+            DATE( `date` ) &gt;= #{startDate}
+            and DATE( `date` ) &lt; #{endDate}
+    </select>
+</mapper>

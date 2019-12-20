@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hydosky.hydoskycdata.mapper.ShoppingMallStatMapper">
+    <resultMap id="BaseResultMap" type="com.hydosky.hydoskycdata.entity.ShoppingMallStat">
+        <!--@mbg.generated-->
+        <!--@Table t_shopping_mall_stat-->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="latest_update_time" jdbcType="TIMESTAMP" property="latestUpdateTime"/>
+        <result column="shopping_mall_id" jdbcType="INTEGER" property="shoppingMallId"/>
+        <result column="year" jdbcType="VARCHAR" property="year"/>
+        <result column="cargo_count" jdbcType="BIGINT" property="cargoCount"/>
+        <result column="freight_count" jdbcType="BIGINT" property="freightCount"/>
+        <result column="order_count" jdbcType="BIGINT" property="orderCount"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, create_time, latest_update_time, shopping_mall_id, `YEAR`, cargo_count, freight_count,
+        order_count
+    </sql>
+    <select id="selectByShoppingMallIdAndYear" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_shopping_mall_stat where shopping_mall_id = #{shoppingMallId} and `year` = #{year}
+    </select>
+    <update id="addNumber">
+        update t_shopping_mall_stat
+        set cargo_count = cargo_count + #{cargoNumber},
+        freight_count = freight_count + #{freightNumber},
+        order_count = order_count + #{orderNumber}
+        where shopping_mall_id = #{shoppingMallId}
+        and `year` = #{year}
+    </update>
+    <insert id="initData">
+        insert into t_shopping_mall_stat(shopping_mall_id,`year`,cargo_count,freight_count,order_count) value
+        (#{shoppingMallId},#{year},0,0,0);
+    </insert>
+
+    <select id="cityFreightAmountStatisticsByYear" resultType="java.util.HashMap">
+         select
+            sm.city_name x,
+            sum( smt.freight_count ) y
+        from
+            t_shopping_mall sm
+            LEFT JOIN t_shopping_mall_stat smt on sm.id = smt.shopping_mall_id
+        where
+            smt.`year` = #{year}
+        GROUP BY
+            sm.city_name
+    </select>
+
+    <select id="cityCargoQuantityStatisticsByYear" resultType="java.util.HashMap">
+         select
+            sm.city_name x,
+            sum( smt.cargo_count ) y
+        from
+            t_shopping_mall sm
+            LEFT JOIN t_shopping_mall_stat smt on sm.id = smt.shopping_mall_id
+        where
+            smt.`year` = #{year}
+        GROUP BY
+            sm.city_name
+    </select>
+</mapper>
